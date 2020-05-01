@@ -1,6 +1,6 @@
 # frontend
 
-> My classy Nuxt.js project
+> moleculer-template-project frontend
 
 ## Build Setup
 
