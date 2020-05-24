@@ -281,10 +281,22 @@ module.exports = {
         return []
       }
 
-      return Promise.all(docs.map(doc => this.broker.call(
-        `${pivotService}.count`, this.getParams(ctx, this.getQueryParam(withRule, ctx, docs, relatingField, pivotRelatedField, pivotQuery), passThroughParams, relatedField),
-        { meta: this.getPassThroughMeta(ctx, passThroughParams) }
-      )))
+      const pivotEntities = await this.broker.call(`${pivotService}.find`,
+        this.getParams(ctx, this.getQueryParam(withRule, ctx, docs, relatingField, pivotRelatedField, pivotQuery), passThroughParams, relatedField),
+        { meta: this.getPassThroughMeta(ctx, passThroughParams) })
+
+      let relatedCounts = []
+      if (pivotEntities.length) {
+        relatedCounts = await Promise.all(
+          pivotEntities.map(pivotEntity =>
+            this.broker.call(`${relatedService}.count`,
+              this.getParams(ctx, this.getQueryParam(withRule, ctx, [pivotEntity], pivotRelatingField, relatedField, relatedQuery), [...passThroughParams, 'with', 'fields'], relatedField),
+              { meta: this.getPassThroughMeta(ctx, passThroughParams) }
+            ).then(res => ({ ...pivotEntity, [withRule]: res }))
+          ))
+      }
+
+      return docs.map(doc => relatedCounts.reduce((p, c) => p + (this.compareEntities(doc, c, relatingField, pivotRelatedField) ? c[withRule] : 0), 0))
     },
 
     getQueryParam (withRule, ctx, docs, relatingField, relatedField, query = {}) {
