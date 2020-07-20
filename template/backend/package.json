@@ -35,7 +35,7 @@
     "axios": "0.18.1",
     "ioredis": "^4.16.3",
     "knex": "^0.21.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moleculer": "^0.14.6",
     "moleculer-cronjob": "^0.1.5",
     "moleculer-db": "^0.8.7",
