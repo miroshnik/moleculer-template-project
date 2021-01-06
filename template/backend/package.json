@@ -32,7 +32,7 @@
     "moleculer-repl": "^0.6.4"
   },
   "dependencies": {
-    "axios": "0.18.1",
+    "axios": "0.21.1",
     "ioredis": "^4.16.3",
     "knex": "^0.21.0",
     "lodash": "^4.17.15",
